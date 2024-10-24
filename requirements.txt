@@ -3,3 +3,4 @@ uvicorn # asny wsgi web interface
 cassandra-driver
 pydantic-settings
 python-dotenv
+email-validator
