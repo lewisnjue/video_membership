@@ -2,8 +2,9 @@ from pydantic import Field
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 import pathlib 
+import os 
 BASE_DIR = pathlib.Path(__file__).resolve().parent
-
+os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = "1"
 class Settings(BaseSettings):
     keyspace : str
     ASTRADB_CLIENT_ID : str
