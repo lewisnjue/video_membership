@@ -10,8 +10,6 @@ settings = config.get_settings()
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent # the location of the folder 
 
 ASTRADB_CONNECT_BUNDLE = BASE_DIR / "connect_bundle"/"connect.zip"
-print(ASTRADB_CONNECT_BUNDLE) # -> see if the path exist 
-print(ASTRADB_CONNECT_BUNDLE)
 
 
 ASTRADB_CLIENT_ID = settings.ASTRADB_CLIENT_ID # AUTHENTICATION TO CASSANDR
