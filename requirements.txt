@@ -1,0 +1,2 @@
+fastapi
+uvicorn # asny wsgi web interface 
