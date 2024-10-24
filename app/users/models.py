@@ -2,7 +2,7 @@ from cassandra.cqlengine.models import Model
 import uuid
 from cassandra.cqlengine import columns
 from app.config import get_settings
-from . import validators 
+from . import validators , security
 settings = get_settings()
 keyspace = settings.keyspace
 
@@ -20,6 +20,19 @@ class User(Model):
     def __str__(self):
         return self.__repr__()
     
+    def set_password(self,pw , commit = False):
+        pw_hash = security.generate_hash(pw)
+        self.password = pw_hash
+        if commit:
+            self.save()
+        return True 
+    def verify_password(self,pw):
+        pw_hash = self.password
+        verified , _ = security.verify_hash(pw_hash,pw)
+        
+        return verified    
+    
+    
 
     @staticmethod
     def create_user(email,password=None):
@@ -31,7 +44,8 @@ class User(Model):
         if not valid:
             raise Exception(msg)
         obj = User(email= email)
-        obj.password = password
+        obj.set_password(password)
+        #obj.password = password
         obj.save() 
         return obj 
     
