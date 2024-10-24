@@ -1,2 +1,3 @@
 fastapi
 uvicorn # asny wsgi web interface 
+cassandra-driver
