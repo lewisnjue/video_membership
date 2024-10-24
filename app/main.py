@@ -1,6 +1,5 @@
 from fastapi import FastAPI # improting fast api class 
-
-
+from . import config 
 
 app = FastAPI() # creating a object 
 
