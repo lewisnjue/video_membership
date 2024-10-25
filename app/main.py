@@ -35,3 +35,12 @@ def users_list_view():
     q = User.objects.all().limit(10)
     return list(q)
 
+
+
+@app.get("/login",response_class=HTMLResponse) 
+def login_get_view(request:Request):
+    
+    return templates.TemplateResponse("auth/login.html",{
+        "request":request
+    }
+    )
