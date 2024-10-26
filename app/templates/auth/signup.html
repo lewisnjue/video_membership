@@ -4,21 +4,7 @@
 
 <h1>Sign up</h1>
 
-{% if errors %}
-<div>
-<p>An error has occured please check the following : </p>
-<ul>
-    {% for error in errors %}
-        <li><b>{{error.loc[0]}}</b>:{{error.msg}} </li>
-    {% endfor %}
-
-</ul>
-
-
-</div>
-{% endif %}
-
-
+{% include 'snippets/forms_errors.html' %}
 
 <h1> login</h1>
 <form action="" method="post">
