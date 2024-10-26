@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<h1>Sign up</h1>
+
+{% if erros %}
+
+    {{ erros }}
+
+{% endif %}
+
+
+
 <h1> login</h1>
+<div>
+{{data}}
+</div>
 <form action="" method="post">
     <div>
         <label for="email">Email</label>
@@ -15,7 +29,7 @@
     </div>
     <div>
         <label for="password_confirm">Confirm password</label>
-        <input type="password" id="password_confirm">
+        <input type="password" id="password_confirm" name="password_confirm">
     </div>
     <button type="submit">sign up</button>
 </form>
