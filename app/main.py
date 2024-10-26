@@ -5,10 +5,10 @@ import pathlib
 from fastapi.templating import Jinja2Templates
 from cassandra.cqlengine.management import sync_table 
 from app.users.models import User
-from .users.schemas import UserSignupSchema
+from .users.schemas import UserSignupSchema , UserLoginSchema
 import json
 from pydantic.v1.error_wrappers import ValidationError
-
+from app.utilis import valid_schema_or_error
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 TEMPLATE_DIR = BASE_DIR / "templates"
 
@@ -49,9 +49,16 @@ def login_get_view(request:Request):
     }
     )
 @app.post("/login",response_class=HTMLResponse) 
-def login_get_view(request:Request,email:str = Form(...),password : str = Form(...)):
+def login_post_view(request:Request,email:str = Form(...),password : str = Form(...)):
+    raw_data = {
+        "email":email,
+        "password":password,
+    }
+    data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
     return templates.TemplateResponse("auth/login.html",{
-        "request":request
+        "request":request,
+        "data":data,
+        "errors":errors
     }
     )
 
@@ -65,25 +72,12 @@ def login_get_view(request:Request):
     )
 @app.post("/signup", response_class=HTMLResponse)
 async def login_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
-    errors = []
-    data = {}
-    
-    try:
-        cleaned_data = UserSignupSchema(email=email, password=password, password_confirm=password_confirm)
-        data = cleaned_data.dict()  # Only if validation succeeds
-        print("Cleaned Data:", data)
-        
-    except ValidationError as e:
-        # Convert validation errors to JSON
-        error_str = e.json()
-        
-        # Parse JSON errors
-        try:
-            errors = json.loads(error_str)
-        except json.JSONDecodeError:
-            errors = [{"loc": "non_field_error", "msg": "Unknown error"}]
-        
-        print("Errors:", errors)
+    raw_data = {
+        "email":email,
+        "password":password,
+        "password_confirm":password_confirm
+    }
+    data , errors = valid_schema_or_error(raw_data,UserSignupSchema)
     
     return templates.TemplateResponse("auth/signup.html", {
         "request": request,
