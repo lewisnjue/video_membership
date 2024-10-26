@@ -5,17 +5,22 @@
 <h1>Sign up</h1>
 
 {% if errors %}
+<div>
+<p>An error has occured please check the following : </p>
+<ul>
+    {% for error in errors %}
+        <li><b>{{error.loc[0]}}</b>:{{error.msg}} </li>
+    {% endfor %}
 
-    {{ errors }}
+</ul>
 
+
+</div>
 {% endif %}
 
 
 
 <h1> login</h1>
-<div>
-{{data}}
-</div>
 <form action="" method="post">
     <div>
         <label for="email">Email</label>
