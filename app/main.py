@@ -60,30 +60,33 @@ def login_get_view(request:Request,email:str = Form(...),password : str = Form(.
 def login_get_view(request:Request):
     
     return templates.TemplateResponse("auth/signup.html",{
-        "request":request
+        "request":request # reguest must be pased to the template 
     }
     )
-@app.post("/signup",response_class=HTMLResponse) 
-def login_get_view(request:Request,email:str = Form(...),password : str = Form(...),password_confirm: str = Form(...)):
-
-    erros = []
-    error_str= ""
+@app.post("/signup", response_class=HTMLResponse)
+async def login_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
+    errors = []
+    data = {}
+    
     try:
-        cleaned_data = UserSignupSchema(email=email,password = password, password_confirm = password_confirm)
-        data = cleaned_data.dict() # if no erros occurs 
+        cleaned_data = UserSignupSchema(email=email, password=password, password_confirm=password_confirm)
+        data = cleaned_data.dict()  # Only if validation succeeds
+        print("Cleaned Data:", data)
+        
     except ValidationError as e:
-        data = {}
-        error_str =e.json() # if the error occurs 
+        # Convert validation errors to JSON
+        error_str = e.json()
+        
+        # Parse JSON errors
         try:
-            erros = json.loads(error_str)
-        except Exception as e:
-            erros = {"loc": "non_field_error","msg":"unknown error"}
-
-    return templates.TemplateResponse("auth/signup.html",{
-        "request":request,
-        "data":data,
-        "errors":erros
-    }
-    )
-
-
+            errors = json.loads(error_str)
+        except json.JSONDecodeError:
+            errors = [{"loc": "non_field_error", "msg": "Unknown error"}]
+        
+        print("Errors:", errors)
+    
+    return templates.TemplateResponse("auth/signup.html", {
+        "request": request,
+        "data": data,
+        "errors": errors
+    })
