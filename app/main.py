@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request # improting fast api class 
+from fastapi import FastAPI, Request,Form # improting fast api class 
 from . import config 
 from fastapi.responses import HTMLResponse
 import pathlib
@@ -44,3 +44,27 @@ def login_get_view(request:Request):
         "request":request
     }
     )
+@app.post("/login",response_class=HTMLResponse) 
+def login_get_view(request:Request,email:str = Form(...),password : str = Form(...)):
+    return templates.TemplateResponse("auth/login.html",{
+        "request":request
+    }
+    )
+
+
+@app.get("/signup",response_class=HTMLResponse) 
+def login_get_view(request:Request):
+    
+    return templates.TemplateResponse("auth/signup.html",{
+        "request":request
+    }
+    )
+@app.post("/signup",response_class=HTMLResponse) 
+def login_get_view(request:Request,email:str = Form(...),password : str = Form(...),password_confirm: str = Form(...)):
+
+    return templates.TemplateResponse("auth/signup.html",{
+        "request":request
+    }
+    )
+
+
