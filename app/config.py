@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     keyspace : str
     ASTRADB_CLIENT_ID : str
     ASTRADB_CLIENT_SECRET : str  
+    secret_key : str    
+    algorithm_jwt : str 
     
     class Config:
         env_file = '.env'
