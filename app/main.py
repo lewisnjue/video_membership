@@ -2,19 +2,16 @@ from fastapi import FastAPI, Request,Form # improting fast api class
 from . import config 
 from fastapi.responses import HTMLResponse
 import pathlib
-from fastapi.templating import Jinja2Templates
+from . import shortcuts
 from cassandra.cqlengine.management import sync_table 
 from app.users.models import User
 from .users.schemas import UserSignupSchema , UserLoginSchema
 import json
 from pydantic.v1.error_wrappers import ValidationError
 from app.utilis import valid_schema_or_error
-BASE_DIR = pathlib.Path(__file__).resolve().parent
-TEMPLATE_DIR = BASE_DIR / "templates"
-
+from .shortcuts import render
 DB_SESSION = None # global variable e
 app = FastAPI() # creating a object 
-templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 from . import db    
 
@@ -30,9 +27,9 @@ def on_startup():
 @app.get("/",response_class=HTMLResponse) # this is routing not like in django 
 def homepage(request:Request):
     context ={
-        "request":request
+       
     }
-    return templates.TemplateResponse("home.html",context=context)
+    return render(request,"home.html",context=context)
 
 @app.get("/users")
 def users_list_view():
@@ -44,8 +41,7 @@ def users_list_view():
 @app.get("/login",response_class=HTMLResponse) 
 def login_get_view(request:Request):
     
-    return templates.TemplateResponse("auth/login.html",{
-        "request":request
+    return render(request,"auth/login.html",{
     }
     )
 @app.post("/login",response_class=HTMLResponse) 
@@ -55,8 +51,7 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
         "password":password,
     }
     data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
-    return templates.TemplateResponse("auth/login.html",{
-        "request":request,
+    return render(request,"auth/login.html",{
         "data":data,
         "errors":errors
     }
@@ -66,8 +61,8 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
 @app.get("/signup",response_class=HTMLResponse) 
 def login_get_view(request:Request):
     
-    return templates.TemplateResponse("auth/signup.html",{
-        "request":request # reguest must be pased to the template 
+    return render(request,"auth/signup.html",{
+        # reguest must be pased to the template 
     }
     )
 @app.post("/signup", response_class=HTMLResponse)
@@ -79,8 +74,7 @@ async def login_post_view(request: Request, email: str = Form(...), password: st
     }
     data , errors = valid_schema_or_error(raw_data,UserSignupSchema)
     
-    return templates.TemplateResponse("auth/signup.html", {
-        "request": request,
+    return render(request,"auth/signup.html", {
         "data": data,
         "errors": errors
     })
