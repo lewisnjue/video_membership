@@ -89,3 +89,70 @@ so , in summary , setup:
 
 this setup helps ensure a consisntesnt test enviroment by cleaingin up any temparray test data after each test . 
 
+
+
+in web development , cookies are small pieaces of data stored on the users device by their web browser as they interact with websites . cookies play a key role in maintain a suers session , tracking site preferences and anabling a personiized web experience 
+
+here is a breakdown of how cookies work, including types and common use cases 
+
+## WHAT COOKIES ARE AND HOW THEY WORK 
+
+a cookie is essentailly a text file ontainng information in name vaue paris , such as user_id =123. when a suer visits a website , teh web server can create a cookie and send it to the users broswer , which stores it . every time the user revistis the site , theri brwoser sends the cookie back to the server , allowing the sit t e rember the user . 
+
+
+#### BASIC STEPS : 
+
+- user visits a website . if the site need to save data , it sends a set-cookie header in the http response. 
+
+- browser stores the cookie : the browser keeps that cookie data , either until it expires or is manually crealed . 
+
+
+- browse sends cookie on subsequesnt requests : each time the user revistis the site , teh browser includes the cookie data in the http requst header , allowing the server to rember previous information . 
+
+
+
+
+## TYPES OF COOKIES 
+
+there are different types of cookies based on their purpose and lifespan: 
+
+- sesion cookies : these are tempoarry cookies that expire once the user closes the browser . thery ofen used to keep users loged in during their seesion or rember temporarry selections 
+
+- persistent cookies : these  remain on the users device for a set period ( determed by teh Expires or Max-Age) attribute . they are useful fo rrembering login ifnoramion , language preferences or user personaliion across sessions . 
+
+
+- first party cookies : created by the website ther user is currentry visting , these are typically sued for core site functionaliry tlike tracking logged in status or string perfernces . 
+
+- third party cookies : created by domains other that the user is currently vising , these are typically used by adversisers and analytics companies to track users across multiple sites , providing data for targeted adversing . 
+
+
+### COOOKIE ATTRIBUES 
+
+cookies comes with various attribues that control how they behave : 
+
+- Expires / Max-Age : define how long the cookie is stored . Expres is specific data , while Max-Age specifies a nubmer of seconds . 
+
+- Domain : Specifies the domain where the cookie is valid . subdomains can also be specified . 
+
+- Path : limes where teh cookie is sent within the website . for example setting Path=/user would only send the cookie on request within the /user path . 
+
+- secure : ensure that the cooie is only sent over https connectison , protecting it from eaverpropping . 
+
+- httpony : prevent javasript from accessing the cookie , helping protech it from cross site scripting (xss) attacks .
+
+
+- samesite : restrics cookies from being sent alogn with cross site reqeust . can be set of strict , lax or none , which adds an exra layer of pretection againist cross site request forgery attacks . 
+
+
+### COMMON USE CASES FOR COOKIES 
+
+cookies have several improrant use cases , especially for user exerience and session management . 
+
+- user sessions : cookies are ofetn used to maintain user lgin sesesion so that users remain logged in as they naviage different pages . 
+
+- personalizaion : preferences like language settings , themes 
+- shopping carts : for ecommerce sites , cookies help keep track of itesm added to a cart even before the user logs in . 
+
+- analtcs and tracking : cookies enable tracking of use behaviou on a site or across sites , allowing analsytics and targetd adverstinng 
+
+
