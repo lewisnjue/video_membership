@@ -10,11 +10,14 @@ TEMPLATE_DIR = settings.template_dir
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 
-def render(request,template_name,context):
+def render(request,template_name,context,cookies:dict = {}):
     ctx = context.copy()
     ctx.update({"request":request})
     t = templates.get_template(template_name)
     html_str = t.render(ctx)
     response = HTMLResponse(html_str)
+    if len(cookies.keys()) > 0:
+        for k,v in cookies.items():
+            response.set_cookie(key=k, value=v,httponly=True)
+    
     return response
-    #return templates.TemplateResponse(template_name,ctx)
