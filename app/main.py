@@ -51,6 +51,9 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
         "password":password,
     }
     data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
+    if len(errors) > 0 :
+        return render(request,"auth/login.html",raw_data)
+    print(data)
     return render(request,"auth/login.html",{
         "data":data,
         "errors":errors
