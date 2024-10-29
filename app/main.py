@@ -62,20 +62,22 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
 
 
 @app.get("/signup",response_class=HTMLResponse) 
-def login_get_view(request:Request):
+def signup_get_view(request:Request):
     
     return render(request,"auth/signup.html",{
         # reguest must be pased to the template 
     }
     )
 @app.post("/signup", response_class=HTMLResponse)
-async def login_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
+async def signup_post_view(request: Request, email: str = Form(...), password: str = Form(...), password_confirm: str = Form(...)):
     raw_data = {
         "email":email,
         "password":password,
         "password_confirm":password_confirm
     }
     data , errors = valid_schema_or_error(raw_data,UserSignupSchema)
+    print(data)
+    
     
     return render(request,"auth/signup.html", {
         "data": data,
