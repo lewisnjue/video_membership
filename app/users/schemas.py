@@ -13,22 +13,7 @@ class UserSignupSchema(BaseModel):
     email: EmailStr
     password: SecretStr
     password_confirm: SecretStr
-    token : str = None
 
-    @root_validator
-    def validate_user(cls,values):
-        err_msg = "incorrect creadintials please try again" 
-        email = values.get('email') or None
-        password = values.get('password') or None
-
-        if email is None or password is None:
-            raise ValueError(err_msg)
-        password = password.get_secret_value()
-        user_obj = auth.authenticate(email,password)
-        if user_obj is None:
-            raise ValueError(err_msg)
-        token = auth.login(user_obj,expires=100)
-        return {"session_id":token}
     
 
         
@@ -60,3 +45,21 @@ class UserSignupSchema(BaseModel):
 class UserLoginSchema(BaseModel):
     email : EmailStr
     password: SecretStr
+    token : str = None
+
+    @root_validator
+    def validate_user(cls,values):
+        err_msg = "incorrect creadintials please try again" 
+        email = values.get('email') or None
+        password = values.get('password') or None
+
+        if email is None or password is None:
+            raise ValueError(err_msg)
+        password = password.get_secret_value()
+        user_obj = auth.authenticate(email,password)
+        if user_obj is None:
+            raise ValueError(err_msg)
+        token = auth.login(user_obj,expires=100)
+        return {"session_id":token}
+
+
