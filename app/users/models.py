@@ -29,7 +29,6 @@ class User(Model):
     def verify_password(self,pw):
         pw_hash = self.password
         verified , _ = security.verify_hash(pw_hash,pw)
-        
         return verified    
     
     

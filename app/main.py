@@ -3,6 +3,7 @@ from . import config
 from fastapi.responses import HTMLResponse
 import pathlib
 from . import shortcuts
+from .shortcuts import redirect
 from cassandra.cqlengine.management import sync_table 
 from app.users.models import User
 from .users.schemas import UserSignupSchema , UserLoginSchema
@@ -53,13 +54,8 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
     data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
     if len(errors) > 0 :
         return render(request,"auth/login.html",raw_data)
-    print(data)
-    return render(request,"auth/login.html",{
-        "data":data,
-        "errors":errors
-    }
-    )
 
+    return  redirect('/',cookies=data)
 
 @app.get("/signup",response_class=HTMLResponse) 
 def signup_get_view(request:Request):
@@ -77,9 +73,7 @@ async def signup_post_view(request: Request, email: str = Form(...), password: s
     }
     data , errors = valid_schema_or_error(raw_data,UserSignupSchema)
     print(data)
+
     
-    
-    return render(request,"auth/signup.html", {
-        "data": data,
-        "errors": errors
-    })
+    return redirect('/login')
+
