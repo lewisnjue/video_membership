@@ -12,8 +12,11 @@ from pydantic.v1.error_wrappers import ValidationError
 from app.utilis import valid_schema_or_error
 from .shortcuts import render
 from .users.decorators import login_required
-DB_SESSION = None # global variable e
-app = FastAPI() # creating a object 
+
+from .handlers import http_exception_handler #noqa
+
+DB_SESSION = None
+app = FastAPI()
 
 from . import db    
 
