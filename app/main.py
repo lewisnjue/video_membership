@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request,Form # improting fast api class 
+from fastapi import FastAPI, Request,Form ,HTTPException# improting fast api class 
 from . import config 
 from fastapi.responses import HTMLResponse
 import pathlib
@@ -11,6 +11,7 @@ import json
 from pydantic.v1.error_wrappers import ValidationError
 from app.utilis import valid_schema_or_error
 from .shortcuts import render
+from .users.decorators import login_required
 DB_SESSION = None # global variable e
 app = FastAPI() # creating a object 
 
@@ -77,3 +78,12 @@ async def signup_post_view(request: Request, email: str = Form(...), password: s
     
     return redirect('/login')
 
+
+
+
+
+@app.get("/accounts",response_class=HTMLResponse)
+@login_required
+def account_view(request:Request):
+    context ={}
+    return render(request,"account.html",context=context)
