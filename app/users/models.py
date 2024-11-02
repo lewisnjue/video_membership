@@ -47,9 +47,10 @@ class User(Model):
         #obj.password = password
         obj.save() 
         return obj 
+    
     @staticmethod
-    def check_exists(user_Id):
-        q  = User.objects.filter(user_Id = user_Id).allow_filtering()
+    def check_exists(user_Id:uuid):
+        q  = User.objects.filter(user_id = user_Id).allow_filtering()
         return q.count() != 0
     
     @staticmethod
@@ -62,11 +63,7 @@ class User(Model):
         
         return q.first()
     
-    @staticmethod
-    def add_video(url,user_id=None):
-        pass
 
-    
 
 
         
