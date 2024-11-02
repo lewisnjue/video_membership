@@ -9,6 +9,7 @@ from .exceptions import (InvalidYouTubeVideoUrlException,
                          VideoAddedException
                          
 )
+from app.shortcuts import templates
 settings = get_settings()
 
 class Video(Model):
@@ -25,6 +26,13 @@ class Video(Model):
     
     def __repr__(self):
         return self.__str__()
+    
+    def render(self):
+        basename = self.host_service
+        template_name = f"videos/renderes/{basename}.html"
+        context = {"host_id":self.host_id}
+        t = templates.get_template(template_name)
+        return t.render(context)
     
 
     def as_data(self):

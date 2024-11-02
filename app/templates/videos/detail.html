@@ -11,4 +11,9 @@ welcome | {{ super() }}
 {{ host_id }}
 {{ object }}
 
+{{ object.render()|safe }}
+
+{% with host_id=host_id %}
+{% include 'videos/renderes/youtube.html' %}
+{% endwith %}
 {% endblock %}
