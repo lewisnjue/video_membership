@@ -47,6 +47,30 @@ class User(Model):
         #obj.password = password
         obj.save() 
         return obj 
+    @staticmethod
+    def check_exists(user_Id):
+        q  = User.objects.filter(user_Id = user_Id).allow_filtering()
+        return q.count() != 0
     
+    @staticmethod
+    def by_user_id(user_id=None):
+        if user_id is None:
+            return None
+        q  = User.objects.filter(user_Id = user_id).allow_filtering()
+        if q.count() != 1:
+            return None
+        
+        return q.first()
+    
+    @staticmethod
+    def add_video(url,user_id=None):
+        pass
+
+    
+
+
+        
+
+
 
     

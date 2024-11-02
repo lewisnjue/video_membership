@@ -15,7 +15,7 @@ from .users.decorators import login_required
 from app.users.exceptions import LoginRequiredException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from .users.backends import JWTCookiesBackend
-
+from .videos.models import Video
 # from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
@@ -38,6 +38,8 @@ def on_startup():
     DB_SESSION = db.get_session()
     print('startup')
     sync_table(User)
+    sync_table(Video)
+    
 
 
 @app.get("/",response_class=HTMLResponse) # this is routing not like in django 
