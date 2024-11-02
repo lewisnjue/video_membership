@@ -17,11 +17,12 @@ def authenticate(email,password):
     
 
 def login(user_obj,expires=5):
+    new_expires = settings.session_duration
     data = {
     "user_id" :f"{user_obj.user_id}",
     "email":"do not do this ",
     "role":"admin",
-    "exp":datetime.datetime.utcnow() + datetime.timedelta(seconds=expires)
+    "exp":datetime.datetime.utcnow() + datetime.timedelta(seconds=new_expires)
     }
     return jwt.encode(data,settings.secret_key,algorithm=settings.algorithm_jwt)
 

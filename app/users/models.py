@@ -3,6 +3,12 @@ import uuid
 from cassandra.cqlengine import columns
 from app.config import get_settings
 from . import validators , security
+from .exceptions import (
+    UserAlreadyExistsException,
+    UserIdException,
+    InvalidEmailException,
+    LoginRequiredException
+)
 settings = get_settings()
 keyspace = settings.keyspace
 
@@ -38,15 +44,36 @@ class User(Model):
         # check if their is an email in the database arelady 
         q = User.objects.filter(email=email) 
         if q.count() != 0:
-            raise Exception("user already has account")
+            raise UserAlreadyExistsException("user aready has an account")
         valid , msg , email = validators._validate_email(email)
         if not valid:
-            raise Exception(msg)
+            raise InvalidEmailException(msg)
         obj = User(email= email)
         obj.set_password(password)
         #obj.password = password
         obj.save() 
         return obj 
     
+    @staticmethod
+    def check_exists(user_Id:uuid):
+        q  = User.objects.filter(user_id = user_Id).allow_filtering()
+        return q.count() != 0
+    
+    @staticmethod
+    def by_user_id(user_id=None):
+        if user_id is None:
+            return None
+        q  = User.objects.filter(user_Id = user_id).allow_filtering()
+        if q.count() != 1:
+            return None
+        
+        return q.first()
+    
+
+
+
+        
+
+
 
     
