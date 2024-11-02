@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request,Form ,HTTPException# improting fast api cla
 from . import config 
 from fastapi.responses import HTMLResponse
 import pathlib
-from starlette.exceptions import HTTPException as Starlette
 from . import shortcuts
 from .shortcuts import redirect
 from cassandra.cqlengine.management import sync_table 
@@ -14,8 +13,14 @@ from app.utilis import valid_schema_or_error
 from .shortcuts import render
 from .users.decorators import login_required
 from app.users.exceptions import LoginRequiredException
+from starlette.middleware.authentication import AuthenticationMiddleware
+from .users.backends import JWTCookiesBackend
 # from .handlers import http_exception_handler #noqa
+
 app = FastAPI()
+
+app.add_middleware(AuthenticationMiddleware,backend = JWTCookiesBackend())
+
 
 from .handlers import  all_exception
 
@@ -39,6 +44,7 @@ def homepage(request:Request):
     context ={
        
     }
+    print(request.user) # see if it is working 
     return render(request,"home.html",context=context)
 
 @app.get("/users")
