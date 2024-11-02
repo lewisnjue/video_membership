@@ -15,26 +15,10 @@ from .shortcuts import render
 from .users.decorators import login_required
 from app.users.exceptions import LoginRequiredException
 # from .handlers import http_exception_handler #noqa
-
-
 app = FastAPI()
 
-# -> the bolow code should not be there think about it 
+from .handlers import  all_exception
 
-@app.exception_handler(LoginRequiredException)
-async def login_required_exception_handler(request,exc):
-    return redirect(f'/login?next={request.url}',remove_session=True)
-
-@app.exception_handler(Starlette)
-async def login_required_exception_handler(request,exc):
-    status_code = exc.status_code 
-    template_name = 'errors/main.html'
-    if status_code == 404:
-        template_name = 'errors/404.html'
-
-    context = {"status_code":status_code}
-    return render(request=request,template_name=template_name,context=context)
-# upto here 
 
 DB_SESSION = None
 
@@ -78,6 +62,12 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
     }
     data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
     if len(errors) > 0 :
+        raw_data = {
+            "email":email,
+            "password":password,
+            "errors":errors
+
+        }
         return render(request,"auth/login.html",raw_data)
 
     return  redirect('/',cookies=data)
