@@ -1,7 +1,7 @@
 
 def all_exception():
     from starlette.exceptions import HTTPException as Starlette 
-    from app.shortcuts import    render
+    from app.shortcuts import  render, redirect
     from app.users.exceptions import LoginRequiredException
 
     from  .main import app

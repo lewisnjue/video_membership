@@ -15,6 +15,7 @@ from .users.decorators import login_required
 from app.users.exceptions import LoginRequiredException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from .users.backends import JWTCookiesBackend
+
 # from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
@@ -41,11 +42,10 @@ def on_startup():
 
 @app.get("/",response_class=HTMLResponse) # this is routing not like in django 
 def homepage(request:Request):
-    context ={
-       
-    }
-    print(request.user) # see if it is working 
-    return render(request,"home.html",context=context)
+    if request.user.is_authenticated:
+        return render(request,"dashboard.html",{})
+
+    return render(request,"home.html",{})
 
 @app.get("/users")
 def users_list_view():
