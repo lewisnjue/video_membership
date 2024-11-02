@@ -21,8 +21,9 @@ class videocreateshema(BaseModel):
         if video_id is None:
             raise ValueError(f"{url} is not a valid youtube url")
         return url
+    
     @root_validator
-    def validate_data(cls,v,values):
+    def validate_data(cls,values):
         url = values.get('url')
         user_id = values.get('user_id')
         video_obj = None

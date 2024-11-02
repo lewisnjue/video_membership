@@ -20,17 +20,20 @@ class Video(Model):
     user_id = columns.UUID()
 
     def as_data(self):
-        return f"{self.host_service}_id:{self.host_id}"
+        return {f"{self.host_service}_id":self.host_id,"path":self.path}
+    @property
+    def  path(self):
+        return f"/videos/{self.host_id}"
+    
     
 
     @staticmethod
     def add_video(url,user_id :  uuid =None):
         try :
             user_id = uuid.UUID(str(user_id))
-        except Exception : 
-            raise Exception("user id is not valid")
-        
-
+        except Exception :
+            error = " user id is not valid"
+            return  UserIdException(error)
         host_id = extract_video_id(url=url)
         if host_id is None:
             raise InvalidYouTubeVideoUrlException(" invalid youtube video url")
