@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ASTRADB_CLIENT_SECRET : str  
     secret_key : str    
     algorithm_jwt : str 
+    session_duration : int 
     
     class Config:
         env_file = '.env'
