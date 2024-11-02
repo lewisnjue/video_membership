@@ -4,6 +4,7 @@ from  app.shortcuts import render,redirect
 from app import utilis
 from app.users.decorators import login_required
 from .schemas import videocreateshema
+from .models import Video
 router = APIRouter(
     prefix='/videos'
 )
@@ -11,7 +12,11 @@ router = APIRouter(
 @router.get("/",response_class=HTMLResponse)
 @login_required
 def video_list_view(request:Request):
-    return  render(request,"videos/list.html", {})
+    q = list(Video.objects.all().limit(100))
+    context = {
+        "object_list":q
+    }
+    return  render(request,"videos/list.html", context)
 
 @router.get("/detail",response_class=HTMLResponse)
 @login_required
@@ -26,8 +31,9 @@ def vide_create_view(request:Request):
 
 @router.post('/create',response_class=HTMLResponse)
 @login_required
-def vide_create_post_view(request:Request,url : str =Form(...)):
+def vide_create_post_view(request:Request,url : str =Form(...),title : str = Form(...)):
     raw_data = {
+        "title":title,
         "url":url,
         "user_id":request.user.username
     }

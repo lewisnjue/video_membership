@@ -16,8 +16,16 @@ class Video(Model):
     host_id = columns.Text(primary_key = True)
     host_service = columns.Text(default = 'youtube')
     db_id = columns.UUID(primary_key=True,default=uuid.uuid1)
+    title = columns.Text()
     url = columns.Text()
     user_id = columns.UUID()
+
+    def __str__(self):
+        return f"title:{self.title},url{self.url}"
+    
+    def __repr__(self):
+        return self.__str__()
+    
 
     def as_data(self):
         return {f"{self.host_service}_id":self.host_id,"path":self.path}
@@ -28,7 +36,7 @@ class Video(Model):
     
 
     @staticmethod
-    def add_video(url,user_id :  uuid =None):
+    def add_video(url,user_id :  uuid =None,**kwargs):
         try :
             user_id = uuid.UUID(str(user_id))
         except Exception :
@@ -44,7 +52,7 @@ class Video(Model):
 
         if q.count() != 0:
             raise VideoAddedException("Video alredy added")
-        return Video.create(host_id=host_id,user_id=user_id,url=url)
+        return Video.create(host_id=host_id,user_id=user_id,url=url,**kwargs)
 
 
     

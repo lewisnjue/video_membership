@@ -7,5 +7,24 @@ welcome | {{ super() }}
 {% endblock %}
 
 {% block content %}
-<h1> hello world</h1>
+
+{% for object in object_list %}
+<li>
+    <a href="{{ object.path }}">
+    {% if not object.title %}
+    {{ object.host_id }}
+
+{% else %}
+{{ object.title }}
+
+</a>
+
+{% endif %}
+
+
+</li>
+
+
+{% endfor %}
+
 {% endblock %}
