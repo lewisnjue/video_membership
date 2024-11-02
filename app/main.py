@@ -16,12 +16,17 @@ from app.users.exceptions import LoginRequiredException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from .users.backends import JWTCookiesBackend
 from .videos.models import Video
+from .videos.routers import router as video_router
+
+
+
 # from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
 
 app.add_middleware(AuthenticationMiddleware,backend = JWTCookiesBackend())
 
+app.include_router(video_router)
 
 from .handlers import  all_exception
 
@@ -39,7 +44,7 @@ def on_startup():
     print('startup')
     sync_table(User)
     sync_table(Video)
-    
+
 
 
 @app.get("/",response_class=HTMLResponse) # this is routing not like in django 

@@ -19,6 +19,10 @@ class Video(Model):
     url = columns.Text()
     user_id = columns.UUID()
 
+    def as_data(self):
+        return f"{self.host_service}_id:{self.host_id}"
+    
+
     @staticmethod
     def add_video(url,user_id :  uuid =None):
         try :
