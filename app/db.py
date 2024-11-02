@@ -6,11 +6,9 @@ from . import config
 from cassandra.cqlengine import connection
 
 settings = config.get_settings()
+ASTRADB_CONNECT_BUNDLE_PATH = settings.base_dir.parent   
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent.parent # the location of the folder 
-
-ASTRADB_CONNECT_BUNDLE = BASE_DIR / "connect_bundle"/"connect.zip"
-
+ASTRADB_CONNECT_BUNDLE =ASTRADB_CONNECT_BUNDLE_PATH  / "connect_bundle"/"connect.zip"
 
 ASTRADB_CLIENT_ID = settings.ASTRADB_CLIENT_ID # AUTHENTICATION TO CASSANDR
 ASTRADB_CLIENT_SECRET = settings.ASTRADB_CLIENT_SECRET # AUTHENTICATION TO CASSANDRA

@@ -155,4 +155,10 @@ cookies have several improrant use cases , especially for user exerience and ses
 
 - analtcs and tracking : cookies enable tracking of use behaviou on a site or across sites , allowing analsytics and targetd adverstinng 
 
+ when we add our authenticaion middle ware , this will allow us to be able do do things like 
+
+
+
+print(request.user) and things like print(request.user.is_authenticated)
+
 

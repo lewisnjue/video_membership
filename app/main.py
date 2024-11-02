@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request,Form ,HTTPException# improting fast api cla
 from . import config 
 from fastapi.responses import HTMLResponse
 import pathlib
-from starlette.exceptions import HTTPException as Starlette
 from . import shortcuts
 from .shortcuts import redirect
 from cassandra.cqlengine.management import sync_table 
@@ -14,27 +13,18 @@ from app.utilis import valid_schema_or_error
 from .shortcuts import render
 from .users.decorators import login_required
 from app.users.exceptions import LoginRequiredException
-# from .handlers import http_exception_handler #noqa
+from starlette.middleware.authentication import AuthenticationMiddleware
+from .users.backends import JWTCookiesBackend
 
+# from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
 
-# -> the bolow code should not be there think about it 
+app.add_middleware(AuthenticationMiddleware,backend = JWTCookiesBackend())
 
-@app.exception_handler(LoginRequiredException)
-async def login_required_exception_handler(request,exc):
-    return redirect(f'/login?next={request.url}',remove_session=True)
 
-@app.exception_handler(Starlette)
-async def login_required_exception_handler(request,exc):
-    status_code = exc.status_code 
-    template_name = 'errors/main.html'
-    if status_code == 404:
-        template_name = 'errors/404.html'
+from .handlers import  all_exception
 
-    context = {"status_code":status_code}
-    return render(request=request,template_name=template_name,context=context)
-# upto here 
 
 DB_SESSION = None
 
@@ -52,10 +42,10 @@ def on_startup():
 
 @app.get("/",response_class=HTMLResponse) # this is routing not like in django 
 def homepage(request:Request):
-    context ={
-       
-    }
-    return render(request,"home.html",context=context)
+    if request.user.is_authenticated:
+        return render(request,"dashboard.html",{})
+
+    return render(request,"home.html",{})
 
 @app.get("/users")
 def users_list_view():
@@ -78,6 +68,12 @@ def login_post_view(request:Request,email:str = Form(...),password : str = Form(
     }
     data , errors = valid_schema_or_error(raw_data,UserLoginSchema)
     if len(errors) > 0 :
+        raw_data = {
+            "email":email,
+            "password":password,
+            "errors":errors
+
+        }
         return render(request,"auth/login.html",raw_data)
 
     return  redirect('/',cookies=data)

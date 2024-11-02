@@ -14,12 +14,6 @@ class UserSignupSchema(BaseModel):
     password: SecretStr
     password_confirm: SecretStr
 
-    
-
-        
-
-        
-
     @validator('email')
     def email_available(cls,v,values,**kwargs):
         q = User.objects.filter(email=v)
