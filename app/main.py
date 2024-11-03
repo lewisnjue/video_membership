@@ -19,7 +19,7 @@ from .videos.models import Video
 from .videos.routers import router as video_router
 from .watch_events.models import WatchEvent
 from .watch_events.schemas import WatchEventSchema
-
+from .watch_events.routers import  router as watch_event_router
 # from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
@@ -27,6 +27,7 @@ app = FastAPI()
 app.add_middleware(AuthenticationMiddleware,backend = JWTCookiesBackend())
 
 app.include_router(video_router)
+app.include_router(watch_event_router)
 
 from .handlers import  all_exception
 
