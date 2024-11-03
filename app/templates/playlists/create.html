@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1> add Playlist</h1>
+
+{% include 'snippets/forms_errors.html' %}
+
+<form action="" method="post">
+    <div>
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title">
+    </div>
+
+    <button type="submit">Add Playlist</button>
+</form>
+{% endblock %}

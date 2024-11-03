@@ -15,6 +15,9 @@ class Playlist(Model):
     updated = columns.DateTime(default= datetime.utcnow())
     host_ids = columns.List(value_type=columns.Text)
     title = columns.Text()
+    @property
+    def path(self):
+        return f"/playlists/{self.db_id}"
 
     def add_host_ids(self,host_ids=[],replace_all = False):
         if not isinstance(host_ids,list):
