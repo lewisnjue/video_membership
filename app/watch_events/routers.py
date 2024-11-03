@@ -1,7 +1,6 @@
 from fastapi import APIRouter,Request
-
+from .models import  WatchEvent
 from .schemas import WatchEventSchema
-from .models import WatchEvent
 router = APIRouter()
 
 @router.post("/api/events/watch", response_model=WatchEventSchema)
