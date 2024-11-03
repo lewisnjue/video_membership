@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Request,Form
 from fastapi.responses import HTMLResponse
-from  app.shortcuts import render,redirect
+from  app.shortcuts import render,redirect,get_object_or_404
 from app import utilis
 from app.users.decorators import login_required
 from .schemas import videocreateshema
@@ -44,4 +44,13 @@ def vide_create_post_view(request:Request,url : str =Form(...),title : str = For
     redirect_path = data.get('path') or '/videos/create'
 
     return redirect(redirect_path)
+
+@router.get("/{host_id}",response_class=HTMLResponse)
+def video_detail_view(request:Request,host_id: str):
+    obj = get_object_or_404(Video,host_id=host_id)
+    context = {
+        "host_id":host_id,
+        "object":obj
+    }
+    return render(request,"videos/detail.html",context)
 
