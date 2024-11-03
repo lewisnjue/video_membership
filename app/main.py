@@ -17,9 +17,9 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from .users.backends import JWTCookiesBackend
 from .videos.models import Video
 from .videos.routers import router as video_router
-
-
-
+from .watch_events.models import WatchEvent
+from .watch_events.schemas import WatchEventSchema
+from .watch_events.routers import  router as watch_event_router
 # from .handlers import http_exception_handler #noqa
 
 app = FastAPI()
@@ -27,6 +27,7 @@ app = FastAPI()
 app.add_middleware(AuthenticationMiddleware,backend = JWTCookiesBackend())
 
 app.include_router(video_router)
+app.include_router(watch_event_router)
 
 from .handlers import  all_exception
 
@@ -44,6 +45,7 @@ def on_startup():
     print('startup')
     sync_table(User)
     sync_table(Video)
+    sync_table(WatchEvent)
 
 
 
@@ -114,3 +116,18 @@ async def signup_post_view(request: Request, email: str = Form(...), password: s
 def account_view(request:Request):
     context ={}
     return render(request,"account.html",context=context)
+
+
+
+@app.post("/watch-event",response_model=WatchEventSchema)
+def watch_event_view(request:Request,watch_event:WatchEventSchema):
+    cleaned_data = watch_event.dict()
+    data = cleaned_data.copy()
+    data.update({"user_id":request.user.username})
+    if request.user.is_authenticated:
+        WatchEvent.objects.create(**data)
+        return watch_event
+    return watch_event
+
+
+             

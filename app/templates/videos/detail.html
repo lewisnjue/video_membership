@@ -9,11 +9,15 @@ welcome | {{ super() }}
 {% block content %}
 
 {{ host_id }}
-{{ object }}
+{% if object.title%}
 
+<h1>{{ object.title }}</h1>
 
+{% endif %}
 
-<div id='yt-video' data-video-id="{{ host_id }}" data-start-time='0'></div>
+<p>{{ start_time }}</p>
+
+<div id='yt-video' data-video-id="{{ host_id }}" data-start-time='{{ start_time }}'></div>
 
 <div><code>{{ object.render() }}</code></div>
 
@@ -23,6 +27,7 @@ welcome | {{ super() }}
         var videoId = youtubeVideoDiv.getAttribute("data-video-id")
         var defaultStartTime = 0;
         var initialStartTime = parseInt(youtubeVideoDiv.getAttribute("data-start-time")) || defaultStartTime;
+        var WatchEventEndpoint = "/api/events/watch"
         var player;
         var currentTime;
         var isPlaying;
@@ -57,7 +62,7 @@ welcome | {{ super() }}
     }
     function monitorCurrentPlayback() {
         currentTime = player.getCurrentTime()
-        console.log('currentTime', currentTime)
+        // console.log('currentTime', currentTime)
         timeSinceLastSaved += monitorTimeInterval
         if (isPlaying) {
             monitorTimeOut = setTimeout(monitorCurrentPlayback, monitorTimeInterval) 
@@ -70,13 +75,13 @@ welcome | {{ super() }}
     function onPlayerStateChange(event) {
        
         if (event.data === YT.PlayerState.PLAYING) {
-            console.log("is playing")
+           // console.log("is playing")
             isPlaying = true
             monitorCurrentPlayback()
         }
 
         else if (event.data === YT.PlayerState.PAUSED) {
-            console.log("is paused")
+           // console.log("is paused")
             isPlaying = false
             clearTimeout(monitorTimeOut)
             monitorCurrentPlayback()
@@ -84,7 +89,7 @@ welcome | {{ super() }}
         }
 
         else if (event.data === YT.PlayerState.ENDED) {
-            console.log("is ended")
+            // console.log("is ended")
             isPlaying = false
             clearTimeout(monitorTimeOut)
             monitorCurrentPlayback()
@@ -93,12 +98,34 @@ welcome | {{ super() }}
     }
 
     function storeWatchEvent(){
+        var duration = player.getDuration()
         var data = {
-            currentTime: currentTime,
-            videoId: videoId
+            path: window.location.pathname,
+            end_time: currentTime,
+            start_time: initialStartTime,
+            duration :  duration,
+            host_id: videoId,
+            complete : (duration * 98) < currentTime
         }
         timeSinceLastSaved = 0;
-        console.log('saving...', data)
+        // console.log('saving...', data)
+        var reqOptions = {
+            method : "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body : JSON.stringify(data)
+        }
+        fetch(WatchEventEndpoint,reqOptions)
+        .then(response=>response.json())
+        .then(data=>{
+            
+        })
+        .catch(error=>{
+            
+        })
+        // send POST data 
+        // JSON > j
     }
 
 
