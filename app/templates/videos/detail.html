@@ -93,12 +93,34 @@ welcome | {{ super() }}
     }
 
     function storeWatchEvent(){
+        var duration = player.getDuration()
         var data = {
-            currentTime: currentTime,
-            videoId: videoId
+            path: window.location.pathname,
+            end_time: currentTime,
+            start_time: initialStartTime,
+            duration :  duration,
+            host_id: videoId,
+            complete : (duration * 98) < currentTime
         }
         timeSinceLastSaved = 0;
         console.log('saving...', data)
+        var reqOptions = {
+            method : "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body : JSON.stringify(data)
+        }
+        fetch("/watch-event",reqOptions)
+        .then(response=>response.json())
+        .then(data=>{
+            console.log("success",data)
+        })
+        .catch(error=>{
+            console.log("error happed")
+        })
+        // send POST data 
+        // JSON > j
     }
 
 
