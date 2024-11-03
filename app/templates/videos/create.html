@@ -1,23 +1,5 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1> add video</h1>
-
-{% include 'snippets/forms_errors.html' %}
-
-<form action="" method="post">
-    <div>
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title">
-
-    </div>
-
-
-    <div>
-        <label for="url">YouTube Link</label>
-        <input type="url" id="url" name="url">
-    </div>
-
-    <button type="submit">add video</button>
-</form>
+{% include 'videos/htmx/create.html' %}
 {% endblock %}
