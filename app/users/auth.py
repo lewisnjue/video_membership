@@ -8,7 +8,8 @@ settings = config.get_settings()
 def authenticate(email,password):
     try:
         user_ojb = User.objects.get(email = email)
-        user_ojb.verify_password(password)
+        if not user_ojb.verify_password(password):
+            return None
     except Exception:
         user_ojb = None
         return None

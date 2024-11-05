@@ -35,25 +35,26 @@ class UserSignupSchema(BaseModel):
             raise ValueError('Passwords do not match')
     
 
-
 class UserLoginSchema(BaseModel):
-    email : EmailStr
+    email: EmailStr
     password: SecretStr
-    token : str = None
+    token: str = None
 
     @root_validator
-    def validate_user(cls,values):
-        err_msg = "incorrect creadintials please try again" 
-        email = values.get('email') or None
-        password = values.get('password') or None
+    def validate_user(cls, values):
+        err_msg = "Incorrect credentials, please try again"
+        email = values.get('email')
+        password = values.get('password')
 
         if email is None or password is None:
             raise ValueError(err_msg)
+
         password = password.get_secret_value()
-        user_obj = auth.authenticate(email,password)
+        user_obj = auth.authenticate(email, password)
         if user_obj is None:
             raise ValueError(err_msg)
-        token = auth.login(user_obj,expires=100)
-        return {"session_id":token}
+        token = auth.login(user_obj, expires=100)
+        values['session_id'] = token
+        return values
 
 
