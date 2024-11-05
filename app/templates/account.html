@@ -1,7 +1,11 @@
-{% include 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Your Account | {{ super() }} {% endblock %}
 
 
 {% block content %}
-this is the account page 
 
+<h1>Your Account</h1>
 {% endblock %}
+
+

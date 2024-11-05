@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title%}
+{% block title %}{{ status_code }} | {{ super() }} {% endblock %}
 
-{{ status_code }} | {{ super() }}
-
-{% endblock %}
 
 {% block content %}
-<h1> Error : {{status_code }}</h1>
+
+<h1>Error: {{ status_code }}</h1>
 {% endblock %}
+
+

@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title%}
+{% block title %}Welcome | {{ super() }} {% endblock %}
 
-welcome | {{ super() }}
-
-{% endblock %}
 
 {% block content %}
-<h1> hello world</h1>
+
+<h1>Welcome to Video Membership {{ abc }}</h1>
 {% endblock %}
+
+

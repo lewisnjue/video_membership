@@ -1,25 +1,28 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title%}
 
-welcome | {{ super() }}
-
-{% endblock %}
 
 {% block content %}
+<div class='row'>
 
-{{ host_id }}
-{% if object.title%}
+    <div class='col-md-9 col-12'>
 
-<h1>{{ object.title }}</h1>
 
-{% endif %}
 
-<p>{{ start_time }}</p>
+<div class='ratio ratio-16x9' id='yt-video' data-video-id="{{ host_id }}" data-start-time='{{ start_time }}'></div>
 
-<div id='yt-video' data-video-id="{{ host_id }}" data-start-time='{{ start_time }}'></div>
+</div>
 
-<div><code>{{ object.render() }}</code></div>
+
+<div class='col-md-3 col-12'>
+    
+    {% if object.title %}<h5>{{ object.title }}</h5>{% endif %}
+
+    <code>{{ object.render() }}</code>
+</div>
+
+
+</div>
 
 <script>
     var youtubeVideoDiv = document.getElementById('yt-video')
@@ -27,12 +30,12 @@ welcome | {{ super() }}
         var videoId = youtubeVideoDiv.getAttribute("data-video-id")
         var defaultStartTime = 0;
         var initialStartTime = parseInt(youtubeVideoDiv.getAttribute("data-start-time")) || defaultStartTime;
-        var WatchEventEndpoint = "/api/events/watch"
+        var watchEventEndpoint = "/api/events/watch"
         var player;
         var currentTime;
         var isPlaying;
         var monitorTimeOut;
-        var monitorTimeInterval = 1000;
+        var monitorTimeInterval = 200;
         var timeSinceLastSaved = 0;
         var timeIntervalForSave = 5000;
         function onYouTubeIframeAPIReady() {
@@ -43,7 +46,7 @@ welcome | {{ super() }}
                 videoId: videoId,
                 playerVars: {
                     'modestbranding': 1,
-                    'autoplay': 1,
+                    'autoplay': 0,
                     'start': 0,
                     'playsinline': 1,
                     'controls': 1,
@@ -62,7 +65,6 @@ welcome | {{ super() }}
     }
     function monitorCurrentPlayback() {
         currentTime = player.getCurrentTime()
-        // console.log('currentTime', currentTime)
         timeSinceLastSaved += monitorTimeInterval
         if (isPlaying) {
             monitorTimeOut = setTimeout(monitorCurrentPlayback, monitorTimeInterval) 
@@ -75,13 +77,13 @@ welcome | {{ super() }}
     function onPlayerStateChange(event) {
        
         if (event.data === YT.PlayerState.PLAYING) {
-           // console.log("is playing")
+            // console.log("is playing")
             isPlaying = true
             monitorCurrentPlayback()
         }
 
         else if (event.data === YT.PlayerState.PAUSED) {
-           // console.log("is paused")
+            // console.log("is paused")
             isPlaying = false
             clearTimeout(monitorTimeOut)
             monitorCurrentPlayback()
@@ -103,31 +105,37 @@ welcome | {{ super() }}
             path: window.location.pathname,
             end_time: currentTime,
             start_time: initialStartTime,
-            duration :  duration,
+            duration: duration,
             host_id: videoId,
-            complete : (duration * 98) < currentTime
+            complete: (duration * .98) < currentTime
         }
         timeSinceLastSaved = 0;
         // console.log('saving...', data)
+
+        // send POST data
+        // JSON -> JavaScript Object Notion
         var reqOptions = {
-            method : "POST",
+            method: "POST",
             headers: {
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
             },
-            body : JSON.stringify(data)
+            body: JSON.stringify(data)
         }
-        fetch(WatchEventEndpoint,reqOptions)
+        fetch(watchEventEndpoint, reqOptions)
         .then(response=>response.json())
         .then(data=>{
-            
+            // console.log("success:", data)
         })
-        .catch(error=>{
-            
+        .catch(err => {
+            // fetch to an error catching endpoint
+            // console.log('error: ', err)
         })
-        // send POST data 
-        // JSON > j
     }
 
 
 </script>
+
+
 {% endblock %}
+
+

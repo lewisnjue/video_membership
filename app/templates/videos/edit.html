@@ -1,21 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title%}
 
-welcome | {{ super() }}
-
-{% endblock %}
 
 {% block content %}
 
-{{ host_id }}
-{% if object.title%}
+<div class='row'>
+    <div class='col-12 col-md-3'>
+        {% include 'videos/sidebar.html' %}
 
-<h1>Edit {{ object.title }}</h1>
+    </div>
+    <div class='col-12 col-md-9'>
 
-{% endif %}
+<h1>Edit Video</h1>
+
 {% with video=object %}
-{% include 'videos/htmx/edit.html' %}
-
+    {% include 'videos/htmx/edit.html' %}
 {% endwith %}
+</div>
+</div>
+
+
 {% endblock %}
+
+
