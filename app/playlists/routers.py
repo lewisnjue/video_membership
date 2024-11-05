@@ -10,6 +10,7 @@ from typing import Optional
 import uuid
 from .schemas import PlaylistVideoaddSchema
 from starlette.exceptions import HTTPException
+from typing import Optional
 router = APIRouter(
     prefix='/playlists'
 )
@@ -99,3 +100,27 @@ def playlist_vide_create_post_view(request:Request,url : str =Form(...),title : 
         "title": data.get("title")
         }
     return render(request,"videos/htmx/link.html",context)
+
+
+
+
+
+@router.post("/{db_id}/{host_id}/delete/",response_class=HTMLResponse)
+def playlist_remove_item_view(request:Request,db_id: str,host_id: str,index: Optional[int] = Form(default=None),is_htmx = Depends(is_htmx) ):
+    if not is_htmx:
+        raise HTTPException(status_code=400)
+    try:
+        obj = get_object_or_404(Playlist,db_id=db_id)
+    except :
+        return HTMLResponse("Error . Please reload the page")
+
+    if not request.user.is_authenticated:
+        return HTMLResponse("Please log in and continue")
+
+    index = int(index)
+  
+    host_ids= obj.host_ids
+    host_ids.pop(index)
+    obj.add_host_ids(host_ids,replace_all=True) 
+    obj.save()
+    return HTMLResponse("Deleted")
