@@ -5,24 +5,17 @@
 welcome | {{ super() }}
 
 {% endblock %}
+<!-- 
+come back here if it fails 
+-->
 
 {% block content %}
 
 {% for object in object_list %}
-<li>
-    <a href="{{ object.path }}">
-    {% if not object.title %}
-    {{ object.host_id }}
+<div style="margin: 2rem;">
+{% include '/videos/htmx/list-inline.html' %}
+</div>
 
-{% else %}
-{{ object.title }}
-
-</a>
-
-{% endif %}
-
-
-</li>
 
 
 {% endfor %}

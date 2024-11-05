@@ -1,20 +1,24 @@
 
 {% include 'snippets/forms_errors.html' %}
 <div>
-<form action="/videos/{{ video.host_id }}/edit" method="POST" >
+<form action="/videos/{{ object.host_id }}/edit" method="POST" hx-post="/videos/{{ object.host_id }}/hx-edit">
     <div>
         <label for="title">Title</label>
-        <input type="text" name="title" id="title" required value="{% if video.title %}{{ video.title }} {% endif %}">
+        <input type="text" name="title" id="title" required value="{% if object.title %}{{ object.title }} {% endif %}">
 
     </div>
 
 
     <div>
         <label for="url">YouTube Link</label>
-        <input type="url" id="url" name="url" required value="{% if video.url  %} {{ video.url }} {% endif %}">
+        <input type="url" id="url" name="url" required value="{% if object.url  %} {{ object.url }} {% endif %}">
+    </div>
+    <div>
+        <label for="delete">delete</label>
+        <input type="checkbox" name="delete" id="delete">
     </div>
 
-    <button type="submit">Save video</button>
+    <button type="submit">Save</button>
 </form>
 
 </div>
