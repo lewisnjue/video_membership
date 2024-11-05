@@ -2,6 +2,7 @@ from  app import config
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.exceptions import HTTPException
+from fastapi import Request
 settings = config.get_settings()
 from cassandra.cqlengine.query import (
     DoesNotExist,
@@ -53,3 +54,7 @@ def get_object_or_404(classname,**kwargs):
     except Exception:
         raise HTTPException(status_code=500)
     return obj
+
+
+def is_htmx(request:Request):
+    return request.headers.get("hx-request") == 'true'

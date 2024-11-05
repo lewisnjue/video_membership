@@ -1,11 +1,15 @@
-from fastapi import APIRouter,Request,Form
+from fastapi import APIRouter,Request,Form,Depends
 from fastapi.responses import HTMLResponse
-from  app.shortcuts import render,redirect,get_object_or_404
+from  app.shortcuts import render,redirect,get_object_or_404,is_htmx
 from app import utilis
 from app.users.decorators import login_required
 from .models import Playlist
 from app.watch_events.models import WatchEvent
 from .schemas import playlistcreateshema
+from typing import Optional
+import uuid
+from .schemas import PlaylistVideoaddSchema
+from starlette.exceptions import HTTPException
 router = APIRouter(
     prefix='/playlists'
 )
@@ -58,3 +62,40 @@ def playlist_detail_view(request:Request,db_id: str):
     }
     return render(request,"playlists/detail.html",context)
 
+
+
+
+
+
+@router.get('/{db_id}/add-video',response_class=HTMLResponse,)
+@login_required
+def playlist_vide_create_view(request:Request,is_htmx: bool = Depends(is_htmx),db_id : uuid.UUID = None):
+    print(db_id)
+    if not is_htmx:
+        raise HTTPException(status_code=400)
+
+    return render(request,"playlists/htmx/add-video.html",{"db_id":db_id})
+
+@router.post('/{db_id}/add-video',response_class=HTMLResponse)
+@login_required
+def playlist_vide_create_post_view(request:Request,url : str =Form(...),title : str = Form(...),is_htmx: bool = Depends(is_htmx),db_id:uuid.UUID = None):
+    raw_data = {
+        "title":title,
+        "url":url,
+        "user_id":request.user.username,
+        "playlist_id":db_id
+    }
+    data , errors = utilis.valid_schema_or_error(raw_data,PlaylistVideoaddSchema)
+    redirect_path = data.get('path') or f'/playlists/{db_id}/'
+  
+    if not is_htmx:
+        raise HTTPException(status_code=400)
+
+
+    if len(errors) > 0:
+        return render(request,"playlists/htmx/add-video.html",{"errors":errors,"db_id":db_id})
+    context = {
+        "path": redirect_path,
+        "title": data.get("title")
+        }
+    return render(request,"videos/htmx/link.html",context)

@@ -1,11 +1,14 @@
 from fastapi import APIRouter,Request,Form,Depends
 from fastapi.responses import HTMLResponse
-from  app.shortcuts import render,redirect,get_object_or_404
+from  app.shortcuts import render,redirect,get_object_or_404,is_htmx
 from app import utilis
 from app.users.decorators import login_required
 from .schemas import videocreateshema
 from .models import Video
 from app.watch_events.models import WatchEvent
+from typing import Optional
+import uuid
+
 router = APIRouter(
     prefix='/videos'
 )
@@ -25,12 +28,12 @@ def video_detail_view(request:Request):
     return render(request,"videos/detail.html")
 
 
-def is_htmx(request:Request):
-    return request.headers.get("hx-request") == 'true'
+
 
 @router.get('/create',response_class=HTMLResponse,)
 @login_required
-def vide_create_view(request:Request,is_htmx: bool = Depends(is_htmx)):
+def vide_create_view(request:Request,is_htmx: bool = Depends(is_htmx),playlist_id: Optional[uuid.UUID] =None ):
+    print(playlist_id)
     if is_htmx:
         return render(request,"videos/htmx/create.html",{})
 
