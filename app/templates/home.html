@@ -2,10 +2,139 @@
 
 {% block title %}Welcome | {{ super() }} {% endblock %}
 
-
 {% block content %}
+<div class="container my-5">
+    <!-- Welcome Section -->
+    <div class="text-center col-md-8 col-sm-10 col-12 mx-auto">
+        <h1 class="display-4">Welcome back, User!</h1>
+        <p class="lead text-muted">Discover amazing content tailored just for you. Dive into your next adventure or search for something specific below.</p>
 
-<h1>Welcome to Video Membership {{ abc }}</h1>
+        <!-- Search Form -->
+        <h3 class="mt-4">Search for content</h3>
+        {% include 'search/search_form.html' %}
+    </div>
+
+    <!-- Featured Content Section -->
+    <div class="featured-content mt-5">
+        <h2 class="text-center mb-4">Featured Content</h2>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Featured Content 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Exciting Feature 1</h5>
+                        <p class="card-text">Discover this amazing feature that will enhance your experience.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Featured Content 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Exciting Feature 2</h5>
+                        <p class="card-text">This feature is designed to keep you engaged and entertained.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Featured Content 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Exciting Feature 3</h5>
+                        <p class="card-text">Explore the best tools and features available here for you.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="categories my-5">
+        <h2 class="text-center mb-4">Explore by Category</h2>
+        <div class="row">
+            <div class="col-md-3 col-6 mb-3 text-center">
+                <a href="#" class="text-decoration-none">
+                    <div class="p-4 bg-light rounded">
+                        <i class="fas fa-book fa-3x mb-2"></i>
+                        <h5 class="mt-2">Books</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-3 text-center">
+                <a href="#" class="text-decoration-none">
+                    <div class="p-4 bg-light rounded">
+                        <i class="fas fa-video fa-3x mb-2"></i>
+                        <h5 class="mt-2">Videos</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-3 text-center">
+                <a href="#" class="text-decoration-none">
+                    <div class="p-4 bg-light rounded">
+                        <i class="fas fa-music fa-3x mb-2"></i>
+                        <h5 class="mt-2">Music</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-3 text-center">
+                <a href="#" class="text-decoration-none">
+                    <div class="p-4 bg-light rounded">
+                        <i class="fas fa-gamepad fa-3x mb-2"></i>
+                        <h5 class="mt-2">Games</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-5">
+        <h2>Stay Updated</h2>
+        <p class="text-muted">Sign up for our newsletter to get the latest updates and exclusive content.</p>
+        <a href="#" class="btn btn-success btn-lg">Subscribe Now</a>
+    </div>
+</div>
+
+<!-- Footer Links -->
+<div class="container text-center mt-5">
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5>Company</h5>
+            <ul class="list-unstyled">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Press</a></li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+                <li><a href="#">Help Center</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <h5>Legal</h5>
+            <ul class="list-unstyled">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Cookies Policy</a></li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <h5>Follow Us</h5>
+            <a href="#" class="me-2"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="#" class="me-2"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="#" class="me-2"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="#"><i class="fab fa-linkedin fa-2x"></i></a>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 
