@@ -9,3 +9,4 @@ jinja2
 python-multipart
 python-jose[cryptography]
 algoliasearch
+pydantic_settings
