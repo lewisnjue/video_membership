@@ -1,44 +1,42 @@
-
-from jose import jwt, ExpiredSignatureError
-from .models import User
 import datetime
+from jose import jwt, ExpiredSignatureError
 from app import config
 
-settings = config.get_settings()
-def authenticate(email,password):
-    try:
-        user_ojb = User.objects.get(email = email)
-        if not user_ojb.verify_password(password):
-            return None
-    except Exception:
-        user_ojb = None
-        return None
-    
-    return user_ojb
-    
+from .models import User
 
-def login(user_obj,expires=5):
-    new_expires = settings.session_duration
-    data = {
-    "user_id" :f"{user_obj.user_id}",
-    "email":"do not do this ",
-    "role":"admin",
-    "exp":datetime.datetime.utcnow() + datetime.timedelta(seconds=new_expires)
+settings = config.get_settings()
+
+def authenticate(email, password):
+    # step 1
+    try:
+        user_obj = User.objects.get(email=email)
+    except Exception as e:
+        user_obj = None
+    if not user_obj.verify_password(password):
+        return None
+    return user_obj
+
+def login(user_obj, expires=settings.session_duration):
+    # step 2
+    raw_data = {
+        "user_id": f"{user_obj.user_id}",
+        "role": "admin",
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=expires)
     }
-    return jwt.encode(data,settings.secret_key,algorithm=settings.algorithm_jwt)
+    return jwt.encode(raw_data, settings.secret_key, algorithm=settings.jwt_algorithm)
 
 
 def verify_user_id(token):
-    data = None
+    # step 3
+    data = {}
     try:
-        data = jwt.decode(token,settings.secret_key,algorithms=[settings.algorithm_jwt])
+        data = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
     except ExpiredSignatureError as e:
-        print(e)
-    except Exception:
+        print(e, "log out user")
+    except:
         pass
     if 'user_id' not in data:
         return None
-    
+    # if 'user_id' not in data.keys():
+    #     return None
     return data
-
-

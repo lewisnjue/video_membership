@@ -1,7 +1,6 @@
 fastapi
-uvicorn # asny wsgi web interface 
+uvicorn
 cassandra-driver
-pydantic-settings
 python-dotenv
 email-validator
 argon2-cffi
@@ -9,3 +8,4 @@ pytest
 jinja2
 python-multipart
 python-jose[cryptography]
+algoliasearch

@@ -1,12 +1,9 @@
+class InvalidYouTubeVideoURLException(Exception):
+    """
+    Invalid YouTube Video URL
+    """
 
-class InvalidYouTubeVideoUrlException(Exception):
-     """
-     Invalid Youtube Video URL
-     """
-
-
-
-class VideoAddedException(Exception):
-     """
-      Video  Added  Exeption URL
-     """
+class VideoAlreadyAddedException(Exception):
+    """
+    Video already added
+    """

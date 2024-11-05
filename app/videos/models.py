@@ -1,48 +1,52 @@
-from cassandra.cqlengine.models import Model
-from app.users.models import User
-from cassandra.cqlengine import columns
-from .extractors import  extract_video_id
-from app.config import get_settings
 import uuid
-from app.users.exceptions import UserIdException
-from .exceptions import (InvalidYouTubeVideoUrlException,
-                         VideoAddedException
-                         
-)
-from cassandra.cqlengine.query import(
-    DoesNotExist,
-    MultipleObjectsReturned
-)
+from app.config import get_settings
+from app.users.exceptions import InvalidUserIDException
+from app.users.models import User
 from app.shortcuts import templates
+
+from cassandra.cqlengine import columns
+from cassandra.cqlengine.models import Model
+from cassandra.cqlengine.query import (DoesNotExist, MultipleObjectsReturned)
+
 settings = get_settings()
+
+from .exceptions import (
+    InvalidYouTubeVideoURLException, 
+    VideoAlreadyAddedException
+)
+from .extractors import extract_video_id
+
+
+# Unlisted Video -> video_id -> lock it down
 
 class Video(Model):
     __keyspace__ = settings.keyspace
-    host_id = columns.Text(primary_key = True)
-    host_service = columns.Text(default = 'youtube')
-    db_id = columns.UUID(primary_key=True,default=uuid.uuid1)
+    host_id = columns.Text(primary_key=True) # YouTube, Vimeo
+    db_id = columns.UUID(primary_key=True, default=uuid.uuid1) # UUID1
+    host_service = columns.Text(default='youtube')
     title = columns.Text()
-    url = columns.Text()
+    url = columns.Text() # secure
     user_id = columns.UUID()
 
+
     def __str__(self):
-        return f"title:{self.title},url{self.url}"
-    
+        return self.__repr__()
+
     def __repr__(self):
-        return self.__str__()
-    
+        return f"Video(title={self.title}, host_id={self.host_id}, host_service={self.host_service})"
+
     def render(self):
-        basename = self.host_service
-        template_name = f"videos/renderes/{basename}.html"
-        context = {"host_id":self.host_id}
+        basename = self.host_service # youtube, vimeo
+        template_name = f"videos/renderers/{basename}.html"
+        context = {"host_id": self.host_id}
         t = templates.get_template(template_name)
         return t.render(context)
-    
 
     def as_data(self):
-        return {f"{self.host_service}_id":self.host_id,"path":self.path,"title":self.title}
+        return {f"{self.host_service}_id": self.host_id, "path": self.path, "title": self.title}
+
     @property
-    def  path(self):
+    def path(self):
         return f"/videos/{self.host_id}"
     
     @staticmethod
@@ -61,39 +65,36 @@ class Video(Model):
         except:
             raise Exception("Invalid Request")
         return obj, created
-    
-    def update_video_url(self,url,save=True):
+
+    def update_video_url(self, url, save=True):
         host_id = extract_video_id(url)
         if not host_id:
             return None
-        self.url = url 
+        self.url = url
         self.host_id = host_id
         if save:
             self.save()
-        return url 
-    
-    
+        return url
 
     @staticmethod
-    def add_video(url,user_id :  uuid =None,**kwargs):
-        try :
-            user_id = uuid.UUID(str(user_id))
-        except Exception :
-            error = " user id is not valid"
-            return  UserIdException(error)
-        host_id = extract_video_id(url=url)
+    def add_video(url, user_id=None, **kwargs):
+        # extract video_id from url
+        # video_id = host_id
+        # Service API - YouTube / Vimeo / etc
+        host_id = extract_video_id(url)
         if host_id is None:
-            raise InvalidYouTubeVideoUrlException(" invalid youtube video url")
-        user_exits  = User.check_exists(user_id)
-        if user_exits is None:
-            raise UserIdException("invalid user id")
-        q = Video.objects.allow_filtering().filter(host_id=host_id, user_id=user_id)
-
+            raise InvalidYouTubeVideoURLException("Invalid YouTube Video URL")
+        user_exists = User.check_exists(user_id)
+        if user_exists is None:
+            raise InvalidUserIDException("Invalid user_id")
+        # user_obj = User.by_user_id(user_id)
+        # user_obj.display_name
+        q = Video.objects.allow_filtering().filter(host_id=host_id) # , user_id=user_id)
         if q.count() != 0:
-            raise VideoAddedException("Video alredy added")
-        return Video.create(host_id=host_id,user_id=user_id,url=url,**kwargs)
+            raise VideoAlreadyAddedException("Video already added")
+        return Video.create(host_id=host_id, user_id=user_id, url=url, **kwargs)
 
 
-    
 
-
+# class PrivateVideo(Video):
+# pass

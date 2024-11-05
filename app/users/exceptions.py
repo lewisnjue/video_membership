@@ -1,33 +1,19 @@
-
 from fastapi import HTTPException
-
-class UserAlreadyExistsException(Exception):
-      """
-      user already has account
-      """
-      pass 
-
-
-class InvalidEmailException(Exception):
-      """
-        email is invalid 
-
-      """
-      pass
-
-
-class UserIdException(Exception):
-     """
-     user id exception
-     """
-     
 
 
 class LoginRequiredException(HTTPException):
+    pass
 
-    """ 
-    class LoginRequiredException(Exception):
-    pass  """
+# class LoginRequiredException(Exception):
+#     pass
 
-    pass 
 
+class UserHasAccountException(Exception):
+    """User already has account."""
+
+
+class InvalidEmailException(Exception):
+    """Invalid email"""
+
+class InvalidUserIDException(Exception):
+    """Invalid user id"""
