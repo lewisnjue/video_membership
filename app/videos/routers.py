@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from  app.shortcuts import render,redirect,get_object_or_404,is_htmx
 from app import utilis
 from app.users.decorators import login_required
-from .schemas import videocreateshema
+from .schemas import videocreateshema , videoEditShema
 from .models import Video
 from app.watch_events.models import WatchEvent
 from typing import Optional
@@ -82,3 +82,40 @@ def video_detail_view(request:Request,host_id: str):
     }
     return render(request,"videos/detail.html",context)
 
+
+
+@router.get("/{host_id}/edit",response_class=HTMLResponse)
+@login_required
+def video_edit_view(request:Request,host_id: str):
+    obj = get_object_or_404(Video,host_id=host_id)
+    context = {
+        "host_id":host_id,
+        "object":obj
+    }
+    return render(request,"videos/edit.html",context)
+
+
+
+@router.post("/{host_id}/edit",response_class=HTMLResponse)
+@login_required
+def vide_edit_post_view(
+    request:Request,
+    host_id: str,
+    url : str =Form(...),
+    title : str = Form(...),
+    is_htmx: bool = Depends(is_htmx)):
+    raw_data = {
+        "title":title,
+        "url":url,
+    }
+    obj = get_object_or_404(Video,host_id=host_id)
+    data , errors = utilis.valid_schema_or_error(raw_data,videoEditShema)
+    context = {
+        "object":obj
+    }
+    if len(errors) > 0:
+        return render(request,"videos/edit.html",context={"errors":errors,"object":obj})
+    
+    obj.title = data.get('title') or obj.title
+    obj.update_video_url(url,save=True)
+    return render(request,"videos/edit.html",context=context)

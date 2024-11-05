@@ -55,3 +55,15 @@ class videocreateshema(BaseModel):
 
     
     
+class videoEditShema(BaseModel):
+    url: str # user generated
+    title : str
+
+    @validator('url')
+    def validate_youtube_url(cls,v,values,**kwargs):
+        url = v
+        video_id =  extract_video_id(url)
+        if video_id is None:
+            raise ValueError(f"{url} is not a valid youtube url")
+        return url
+    

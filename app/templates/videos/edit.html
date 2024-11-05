@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title%}
+
+welcome | {{ super() }}
+
+{% endblock %}
+
+{% block content %}
+
+{{ host_id }}
+{% if object.title%}
+
+<h1>Edit {{ object.title }}</h1>
+
+{% endif %}
+{% with video=object %}
+{% include 'videos/htmx/edit.html' %}
+
+{% endwith %}
+{% endblock %}
