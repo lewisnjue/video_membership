@@ -5,13 +5,64 @@
     <div class="row">
         <!-- Main Video Section -->
         <div class="col-md-9 col-12">
-            <div class="position-relative">
+            <div class="position-relative mb-4">
                 <!-- YouTube Video Embed -->
                 <div class="ratio ratio-16x9" id="yt-video" data-video-id="{{ host_id }}" data-start-time="{{ start_time }}"></div>
-                <!-- Overlay Buttons -->
-                <div class="position-absolute top-0 end-0 p-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-primary mb-2" onclick="addToFeatured()">🌟 Add to Featured</button>
-                    <button class="btn btn-sm btn-secondary" onclick="addToWatchLater()">⏰ Watch Later</button>
+            </div>
+
+            <!-- Additional Video Information -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Video Title</h5>
+                    <p class="card-text">Here is an engaging description of the video. It provides viewers with an overview of the content, insights, or background information.</p>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Comments</h5>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Add a comment..." aria-label="Add a comment">
+                        <button class="btn btn-primary mt-2" onclick="postComment()">Post Comment</button>
+                    </div>
+                    <div id="commentsList">
+                        <!-- Sample comments for UI -->
+                        <div class="border-bottom pb-2 mb-2">
+                            <strong>User1</strong>: Amazing video! Learned a lot.
+                        </div>
+                        <div class="border-bottom pb-2 mb-2">
+                            <strong>User2</strong>: Thanks for sharing this.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Videos Section -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Related Videos</h5>
+                    <div class="row">
+                        <!-- Sample related video thumbnails -->
+                        <div class="col-4 mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <div class="ratio ratio-16x9 bg-secondary rounded mb-2"></div>
+                                <p class="small mb-0">Related Video 1</p>
+                            </a>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <div class="ratio ratio-16x9 bg-secondary rounded mb-2"></div>
+                                <p class="small mb-0">Related Video 2</p>
+                            </a>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <div class="ratio ratio-16x9 bg-secondary rounded mb-2"></div>
+                                <p class="small mb-0">Related Video 3</p>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,6 +170,10 @@
 
         function addToWatchLater() {
             alert("Added to Watch Later!");
+        }
+
+        function postComment() {
+            alert("Comment posted!");
         }
     }
 </script>
