@@ -1,141 +1,161 @@
 {% extends "base.html" %}
 
-
-
 {% block content %}
-<div class='row'>
+<div class="container">
+    <div class="row gx-4 mt-4">
 
-    <div class='col-md-9 col-12'>
+        <!-- Video Player Section -->
+        <div class="col-md-9 col-12">
+            <div class="video-container position-relative">
+                <div class="ratio ratio-16x9" id="yt-video" data-video-id="{{ host_id }}" data-start-time="{{ start_time }}"></div>
+                <div class="video-overlay d-flex justify-content-between align-items-center">
+                    <span class="video-title">{{ object.title }}</span>
+                    <button class="btn btn-primary btn-watch-later">Watch Later</button>
+                </div>
+            </div>
+        </div>
 
+        <!-- Sidebar Section with Video Details -->
+        <div class="col-md-3 col-12">
+            <div class="video-details bg-light p-3 rounded-3 shadow-sm">
+                <h5>{{ object.title }}</h5>
+                <p>{{ object.description|truncatewords:20 }}</p>
+                <div class="video-stats d-flex justify-content-between align-items-center mt-3">
+                    <span><i class="bi bi-eye"></i> {{ object.views }} views</span>
+                    <span><i class="bi bi-hand-thumbs-up"></i> {{ object.likes }} likes</span>
+                    <span><i class="bi bi-chat-dots"></i> {{ object.comments }} comments</span>
+                </div>
+            </div>
+        </div>
 
-
-<div class='ratio ratio-16x9' id='yt-video' data-video-id="{{ host_id }}" data-start-time='{{ start_time }}'></div>
-
-</div>
-
-
-<div class='col-md-3 col-12'>
-    
-<!--     {% if object.title %}<h5>{{ object.title }}</h5>{% endif %}
-
-    <code>{{ object.render() }}</code> -->
-</div>
-
-
+    </div>
 </div>
 
 <script>
-    var youtubeVideoDiv = document.getElementById('yt-video')
-    if (youtubeVideoDiv){
-        var videoId = youtubeVideoDiv.getAttribute("data-video-id")
-        var defaultStartTime = 0;
-        var initialStartTime = parseInt(youtubeVideoDiv.getAttribute("data-start-time")) || defaultStartTime;
-        var watchEventEndpoint = "/api/events/watch"
-        var player;
-        var currentTime;
-        var isPlaying;
-        var monitorTimeOut;
-        var monitorTimeInterval = 200;
-        var timeSinceLastSaved = 0;
-        var timeIntervalForSave = 5000;
+    // JavaScript for Enhanced YouTube Player
+    var youtubeVideoDiv = document.getElementById('yt-video');
+    if (youtubeVideoDiv) {
+        var videoId = youtubeVideoDiv.getAttribute("data-video-id");
+        var initialStartTime = parseInt(youtubeVideoDiv.getAttribute("data-start-time")) || 0;
+        var watchEventEndpoint = "/api/events/watch";
+        var player, currentTime, isPlaying;
+        var monitorTimeOut, timeSinceLastSaved = 0;
+        const timeIntervalForSave = 5000;
+
         function onYouTubeIframeAPIReady() {
-            // console.log("hello world");
             player = new YT.Player('yt-video', {
-                height: '390',
-                width: '640',
                 videoId: videoId,
                 playerVars: {
                     'modestbranding': 1,
                     'autoplay': 0,
-                    'start': 0,
-                    'playsinline': 1,
                     'controls': 1,
-                }, 
+                    'start': initialStartTime,
+                    'playsinline': 1
+                },
                 events: {
-                    onReady: onPlayerReady, 
+                    onReady: onPlayerReady,
                     onStateChange: onPlayerStateChange
                 }
-            })
-        };
-    }
-
-    function onPlayerReady(event){
-        player.seekTo(initialStartTime)
-        // player.playVideo()
-    }
-    function monitorCurrentPlayback() {
-        currentTime = player.getCurrentTime()
-        timeSinceLastSaved += monitorTimeInterval
-        if (isPlaying) {
-            monitorTimeOut = setTimeout(monitorCurrentPlayback, monitorTimeInterval) 
+            });
         }
 
-        if (timeSinceLastSaved > timeIntervalForSave) {
-            storeWatchEvent()
-        }
-    }
-    function onPlayerStateChange(event) {
-       
-        if (event.data === YT.PlayerState.PLAYING) {
-            // console.log("is playing")
-            isPlaying = true
-            monitorCurrentPlayback()
+        function onPlayerReady(event) {
+            player.seekTo(initialStartTime);
         }
 
-        else if (event.data === YT.PlayerState.PAUSED) {
-            // console.log("is paused")
-            isPlaying = false
-            clearTimeout(monitorTimeOut)
-            monitorCurrentPlayback()
-            storeWatchEvent()
+        function monitorCurrentPlayback() {
+            currentTime = player.getCurrentTime();
+            timeSinceLastSaved += 200;
+            if (isPlaying) monitorTimeOut = setTimeout(monitorCurrentPlayback, 200);
+            if (timeSinceLastSaved > timeIntervalForSave) storeWatchEvent();
         }
 
-        else if (event.data === YT.PlayerState.ENDED) {
-            // console.log("is ended")
-            isPlaying = false
-            clearTimeout(monitorTimeOut)
-            monitorCurrentPlayback()
-            storeWatchEvent()
+        function onPlayerStateChange(event) {
+            isPlaying = (event.data === YT.PlayerState.PLAYING);
+            clearTimeout(monitorTimeOut);
+            if (isPlaying) monitorCurrentPlayback();
+            if (!isPlaying && (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED)) storeWatchEvent();
+        }
+
+        function storeWatchEvent() {
+            var data = {
+                path: window.location.pathname,
+                end_time: currentTime,
+                start_time: initialStartTime,
+                duration: player.getDuration(),
+                host_id: videoId,
+                complete: player.getDuration() * 0.98 < currentTime
+            };
+            timeSinceLastSaved = 0;
+            fetch(watchEventEndpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).catch(err => console.error('Error:', err));
         }
     }
-
-    function storeWatchEvent(){
-        var duration = player.getDuration()
-        var data = {
-            path: window.location.pathname,
-            end_time: currentTime,
-            start_time: initialStartTime,
-            duration: duration,
-            host_id: videoId,
-            complete: (duration * .98) < currentTime
-        }
-        timeSinceLastSaved = 0;
-        // console.log('saving...', data)
-
-        // send POST data
-        // JSON -> JavaScript Object Notion
-        var reqOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
-        fetch(watchEventEndpoint, reqOptions)
-        .then(response=>response.json())
-        .then(data=>{
-            // console.log("success:", data)
-        })
-        .catch(err => {
-            // fetch to an error catching endpoint
-            // console.log('error: ', err)
-        })
-    }
-
-
 </script>
 
+<style>
+    .video-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        padding: 10px;
+        transition: background 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .video-title {
+        font-weight: bold;
+        font-size: 1.25em;
+        padding-left: 15px;
+    }
+
+    .btn-watch-later {
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-watch-later:hover {
+        background-color: rgba(255, 255, 255, 1);
+    }
+
+    .video-details {
+        transition: transform 0.3s;
+        transform-origin: top;
+        margin-top: 1rem;
+    }
+
+    .video-stats span {
+        color: #666;
+    }
+
+    .video-stats i {
+        color: #333;
+        margin-right: 5px;
+    }
+
+    /* Video Player Hover Effects */
+    .video-container:hover .video-overlay {
+        background: rgba(0, 0, 0, 0.5);
+    }
+</style>
 {% endblock %}
-
-
