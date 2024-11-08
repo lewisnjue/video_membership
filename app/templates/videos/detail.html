@@ -1,139 +1,183 @@
 {% extends "base.html" %}
 
-
-
 {% block content %}
-<div class='row'>
+<div class="container mt-4">
+    <div class="row">
 
-    <div class='col-md-9 col-12'>
+        <!-- Video Player Section -->
+        <div class="col-md-9 col-12 mb-4">
+            <div class="position-relative">
+                <div class="ratio ratio-16x9 rounded shadow" id="yt-video" data-video-id="{{ host_id }}" data-start-time="{{ start_time }}"></div>
+                <div class="overlay d-flex justify-content-between align-items-center p-2 text-white">
+                    <span class="video-title fw-bold">Featured Video</span>
+                    <button class="btn btn-sm btn-light">Save for Later</button>
+                </div>
+            </div>
+            <div class="video-description mt-3">
+                <h5 class="fw-bold">Video Description</h5>
+                <p class="text-muted">This is a cool video that provides insightful content on various topics. Enjoy watching and don’t forget to explore related videos!</p>
+            </div>
+        </div>
 
+        <!-- Sidebar Section with Related Videos and Popular Videos -->
+        <div class="col-md-3 col-12">
+            <div class="bg-light p-3 rounded-3 shadow-sm">
+                <h6 class="fw-bold mb-3">Related Videos</h6>
+                <ul class="list-unstyled">
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">How to Code</h6>
+                            <small class="text-muted">12K views • 2 days ago</small>
+                        </div>
+                    </li>
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">Bootstrap Tips</h6>
+                            <small class="text-muted">9K views • 3 days ago</small>
+                        </div>
+                    </li>
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">JavaScript Tricks</h6>
+                            <small class="text-muted">15K views • 1 week ago</small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="bg-light p-3 mt-4 rounded-3 shadow-sm">
+                <h6 class="fw-bold mb-3">Popular Videos</h6>
+                <ul class="list-unstyled">
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">Understanding AI</h6>
+                            <small class="text-muted">20K views • 1 month ago</small>
+                        </div>
+                    </li>
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">HTML Basics</h6>
+                            <small class="text-muted">18K views • 2 months ago</small>
+                        </div>
+                    </li>
+                    <li class="d-flex mb-3">
+                        <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="Video Thumbnail">
+                        <div>
+                            <h6 class="mb-1">CSS Animations</h6>
+                            <small class="text-muted">25K views • 3 months ago</small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-
-<div class='ratio ratio-16x9' id='yt-video' data-video-id="{{ host_id }}" data-start-time='{{ start_time }}'></div>
-
-</div>
-
-
-<div class='col-md-3 col-12'>
-    
-<!--     {% if object.title %}<h5>{{ object.title }}</h5>{% endif %}
-
-    <code>{{ object.render() }}</code> -->
-</div>
-
-
+    </div>
 </div>
 
 <script>
-    var youtubeVideoDiv = document.getElementById('yt-video')
-    if (youtubeVideoDiv){
-        var videoId = youtubeVideoDiv.getAttribute("data-video-id")
+    var youtubeVideoDiv = document.getElementById('yt-video');
+    if (youtubeVideoDiv) {
+        var videoId = youtubeVideoDiv.getAttribute("data-video-id");
         var defaultStartTime = 0;
         var initialStartTime = parseInt(youtubeVideoDiv.getAttribute("data-start-time")) || defaultStartTime;
-        var watchEventEndpoint = "/api/events/watch"
-        var player;
-        var currentTime;
-        var isPlaying;
-        var monitorTimeOut;
-        var monitorTimeInterval = 200;
-        var timeSinceLastSaved = 0;
-        var timeIntervalForSave = 5000;
+        var watchEventEndpoint = "/api/events/watch";
+        var player, currentTime, isPlaying;
+        var monitorTimeOut, timeSinceLastSaved = 0;
+        const timeIntervalForSave = 5000;
+
         function onYouTubeIframeAPIReady() {
-            // console.log("hello world");
             player = new YT.Player('yt-video', {
-                height: '390',
-                width: '640',
                 videoId: videoId,
                 playerVars: {
                     'modestbranding': 1,
                     'autoplay': 0,
-                    'start': 0,
-                    'playsinline': 1,
                     'controls': 1,
-                }, 
+                    'start': initialStartTime,
+                    'playsinline': 1
+                },
                 events: {
-                    onReady: onPlayerReady, 
+                    onReady: onPlayerReady,
                     onStateChange: onPlayerStateChange
                 }
-            })
-        };
-    }
-
-    function onPlayerReady(event){
-        player.seekTo(initialStartTime)
-        // player.playVideo()
-    }
-    function monitorCurrentPlayback() {
-        currentTime = player.getCurrentTime()
-        timeSinceLastSaved += monitorTimeInterval
-        if (isPlaying) {
-            monitorTimeOut = setTimeout(monitorCurrentPlayback, monitorTimeInterval) 
+            });
         }
 
-        if (timeSinceLastSaved > timeIntervalForSave) {
-            storeWatchEvent()
-        }
-    }
-    function onPlayerStateChange(event) {
-       
-        if (event.data === YT.PlayerState.PLAYING) {
-            // console.log("is playing")
-            isPlaying = true
-            monitorCurrentPlayback()
+        function onPlayerReady(event) {
+            player.seekTo(initialStartTime);
         }
 
-        else if (event.data === YT.PlayerState.PAUSED) {
-            // console.log("is paused")
-            isPlaying = false
-            clearTimeout(monitorTimeOut)
-            monitorCurrentPlayback()
-            storeWatchEvent()
+        function monitorCurrentPlayback() {
+            currentTime = player.getCurrentTime();
+            timeSinceLastSaved += 200;
+            if (isPlaying) monitorTimeOut = setTimeout(monitorCurrentPlayback, 200);
+            if (timeSinceLastSaved > timeIntervalForSave) storeWatchEvent();
         }
 
-        else if (event.data === YT.PlayerState.ENDED) {
-            // console.log("is ended")
-            isPlaying = false
-            clearTimeout(monitorTimeOut)
-            monitorCurrentPlayback()
-            storeWatchEvent()
+        function onPlayerStateChange(event) {
+            isPlaying = (event.data === YT.PlayerState.PLAYING);
+            clearTimeout(monitorTimeOut);
+            if (isPlaying) monitorCurrentPlayback();
+            if (!isPlaying && (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED)) storeWatchEvent();
+        }
+
+        function storeWatchEvent() {
+            var data = {
+                path: window.location.pathname,
+                end_time: currentTime,
+                start_time: initialStartTime,
+                duration: player.getDuration(),
+                host_id: videoId,
+                complete: player.getDuration() * 0.98 < currentTime
+            };
+            timeSinceLastSaved = 0;
+            fetch(watchEventEndpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).catch(err => console.error('Error:', err));
         }
     }
-
-    function storeWatchEvent(){
-        var duration = player.getDuration()
-        var data = {
-            path: window.location.pathname,
-            end_time: currentTime,
-            start_time: initialStartTime,
-            duration: duration,
-            host_id: videoId,
-            complete: (duration * .98) < currentTime
-        }
-        timeSinceLastSaved = 0;
-        // console.log('saving...', data)
-
-        // send POST data
-        // JSON -> JavaScript Object Notion
-        var reqOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
-        fetch(watchEventEndpoint, reqOptions)
-        .then(response=>response.json())
-        .then(data=>{
-            // console.log("success:", data)
-        })
-        .catch(err => {
-            // fetch to an error catching endpoint
-            // console.log('error: ', err)
-        })
-    }
-
-
 </script>
 
+<style>
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+    }
+
+    .video-title {
+        font-size: 1.1rem;
+    }
+
+    .video-description {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .list-unstyled li:hover {
+        background-color: #e9ecef;
+        border-radius: 0.25rem;
+    }
+
+    .list-unstyled li img {
+        width: 60px;
+        height: 60px;
+    }
+</style>
 
 {% endblock %}
