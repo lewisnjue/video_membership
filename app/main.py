@@ -41,8 +41,9 @@ app.include_router(video_router)
 app.include_router(watch_event_router)
 
 
-from .handlers import * # noqa
+from .handlers import get_hanndlers
 
+get_hanndlers()
 
 @app.on_event("startup")
 def on_startup():
@@ -57,8 +58,6 @@ def on_startup():
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request):
-    if request.user.is_authenticated:
-        return render(request, "dashboard.html", {}, status_code=200)
     return render(request, "home.html", {})
 
 
@@ -128,7 +127,7 @@ def signup_post_view(request: Request,
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, UserSignupSchema)
     if len(errors) > 0:
-        return render(request, "auth/signup.html", context, status_code=400)
+        return render(request, "auth/signup.html", {"errors":errors}, status_code=400)
     return redirect("/login")
 
 
@@ -145,8 +144,9 @@ def search_detail_view(request:Request, q:Optional[str] = None):
     if q is not None:
         query = q
         results = search_index(query)
+        print(results.to_json())
         hits = results.get('hits') or []
-        num_hits = results.get('nbHits')
+        num_hits = results['nbHits']
         context = {
             "query": query,
             "hits": hits,

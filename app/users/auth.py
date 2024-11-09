@@ -1,3 +1,4 @@
+        # update the email var with a normalized vasdd`
 import datetime
 from jose import jwt, ExpiredSignatureError
 from app import config
@@ -20,7 +21,6 @@ def login(user_obj, expires=settings.session_duration):
     # step 2
     raw_data = {
         "user_id": f"{user_obj.user_id}",
-        "role": "admin",
         "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=expires)
     }
     return jwt.encode(raw_data, settings.secret_key, algorithm=settings.jwt_algorithm)

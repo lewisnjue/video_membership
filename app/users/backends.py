@@ -6,7 +6,7 @@ from starlette.authentication import (
 )
 
 from . import auth
-
+# please do more research on this
 class JWTCookieBackend(AuthenticationBackend):
     async def authenticate(self, request):
         session_id = request.cookies.get("session_id")

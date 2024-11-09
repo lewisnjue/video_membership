@@ -8,5 +8,5 @@ pytest
 jinja2
 python-multipart
 python-jose[cryptography]
-algoliasearch
+algoliasearch>=4.0,<5.0
 pydantic_settings

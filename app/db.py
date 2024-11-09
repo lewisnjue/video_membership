@@ -1,11 +1,10 @@
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 import json
-import pathlib # help me locate location of files 
 from . import config 
 from cassandra.cqlengine import connection
 
-settings = config.get_settings()
+settings = config.get_settings() # the result of this function will be cached by lru_cache from functool which is very very cool 
 ASTRADB_CONNECT_BUNDLE_PATH = settings.base_dir.parent   
 
 ASTRADB_CONNECT_BUNDLE =ASTRADB_CONNECT_BUNDLE_PATH  / "connect_bundle"/"connect.zip"

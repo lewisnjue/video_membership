@@ -12,7 +12,7 @@ settings = config.get_settings()
 templates = Jinja2Templates(directory=str(settings.templates_dir))
 
 
-
+# this is_htmx tell us if the request is made by htmx since it sets a header called hx-request that what we are checking 
 def is_htmx(request:Request):
     return request.headers.get("hx-request") == 'true'
 
