@@ -128,6 +128,10 @@ def signup_post_view(request: Request,
     data, errors = utils.valid_schema_data_or_error(raw_data, UserSignupSchema)
     if len(errors) > 0:
         return render(request, "auth/signup.html", {"errors":errors}, status_code=400)
+    else:
+        User.create_user(email = raw_data['email'],password=raw_data['password'])
+
+
     return redirect("/login")
 
 
