@@ -1,7 +1,6 @@
 import json
 import pathlib
 from typing import Optional
-
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -48,13 +47,14 @@ get_hanndlers()
 @app.on_event("startup")
 def on_startup():
     # triggered when fastapi starts
-    print("hello world")
+    """
+    this is not good you should have a new database seassion each time you request a diffrent page . this can lead to unexpected error 
+    """
     global DB_SESSION
     DB_SESSION = db.get_session()
     sync_table(User)
     sync_table(Video)
     sync_table(WatchEvent)
-
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request):
@@ -65,7 +65,6 @@ def homepage(request: Request):
 @login_required
 def account_view(request: Request):
     """
-    hello world
     """
     context = {}
     return render(request, "account.html", context)

@@ -20,7 +20,6 @@ class UserLoginSchema(BaseModel):
         email = values.get("email") or None
         password = values.get("password") or None
         if email is None or password is None:
-            
             raise ValueError(err_msg)
         password = password.get_secret_value()
         user_obj = auth.authenticate(email, password)

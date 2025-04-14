@@ -4,7 +4,7 @@ def get_hanndlers():
     from app.main import app
     from app.shortcuts import render, redirect, is_htmx
     from app.users.exceptions import LoginRequiredException
-# this is how am handling the http exception by changing it please dont forget how we are doing this since it is very very important 
+
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request, exc):
         status_code = exc.status_code

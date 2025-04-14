@@ -46,11 +46,9 @@ def render(request, template_name, context={}, status_code:int=200, cookies:dict
     t = templates.get_template(template_name)
     html_str = t.render(ctx)
     response = HTMLResponse(html_str, status_code=status_code)
-    # print(request.cookies)
     response.set_cookie(key='darkmode', value=1)
     if len(cookies.keys()) > 0:
         
-        # set httponly cookies
         for k, v in cookies.items():
             response.set_cookie(key=k, value=v, httponly=True)
     # delete coookies
